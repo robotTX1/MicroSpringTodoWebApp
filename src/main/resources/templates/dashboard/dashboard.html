@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(title=~{::title/text()}, content=~{::#content})}">)}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Todo Dashboard</title>
+</head>
+<body>
+<div id="content" class="flex flex-col items-center min-h-screen">
+    <h1 class="text-3xl" th:text="${'Hi ' + username + '!'}"></h1>
+    <h2 class="text-1xl">Welcome to your dashboard!</h2>
+    <a class="link link-secondary" th:href="@{/}">Go to landing</a>
+</div>
+</body>
+</html>

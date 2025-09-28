@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Todo Web</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <script th:src="@{/webjars/htmx.org/2.0.7/dist/htmx.min.js}" defer></script>
+</head>
+<body>
+<main th:insert="${content}"></main>
+</body>
+</html>

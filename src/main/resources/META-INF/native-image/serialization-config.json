@@ -1,0 +1,17 @@
+{
+  "types": [
+    {
+      "name": "org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest",
+      "customTargetConstructor": true
+    },
+    {
+      "name": "org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest$Builder",
+      "customTargetConstructor": true
+    }
+  ],
+  "lambdaCapturingTypes": [
+    {
+      "name": "org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest"
+    }
+  ]
+}
