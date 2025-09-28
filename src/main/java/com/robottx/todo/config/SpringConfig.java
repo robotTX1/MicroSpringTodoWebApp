@@ -49,6 +49,7 @@ public class SpringConfig {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
         redisConfiguration.setHostName(serviceConfig.getValkeyHostname());
         redisConfiguration.setPort(serviceConfig.getValkeyPort());
+        redisConfiguration.setUsername(secretService.getValkeyUsername());
         redisConfiguration.setPassword(secretService.getValkeyPassword());
         return redisConfiguration;
     }
