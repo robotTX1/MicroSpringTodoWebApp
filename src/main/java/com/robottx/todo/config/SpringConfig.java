@@ -14,10 +14,13 @@ import java.time.Clock;
 import jakarta.ws.rs.InternalServerErrorException;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
+import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
@@ -39,11 +42,12 @@ public class SpringConfig {
     }
 
     @Bean
-    public LettuceConnectionFactory lettuceConnectionFactory(RedisStandaloneConfiguration redisConfiguration) {
+    public LettuceConnectionFactory lettuceConnectionFactory(RedisConfiguration redisConfiguration) {
         return new LettuceConnectionFactory(redisConfiguration);
     }
 
     @Bean
+    @ConditionalOnExpression("'${config-directory}' != 'config'")
     public RedisStandaloneConfiguration redisStandaloneConfiguration(ServiceConfig serviceConfig,
             SecretService secretService) {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
@@ -52,6 +56,18 @@ public class SpringConfig {
         redisConfiguration.setUsername(secretService.getValkeyUsername());
         redisConfiguration.setPassword(secretService.getValkeyPassword());
         return redisConfiguration;
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "config-directory", havingValue = "config")
+    public RedisClusterConfiguration redisClusterConfiguration(ServiceConfig serviceConfig,
+            SecretService secretService) {
+        RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration();
+        clusterConfig.clusterNode(serviceConfig.getValkeyHostname(), serviceConfig.getValkeyPort());
+        clusterConfig.setUsername(secretService.getValkeyUsername());
+        clusterConfig.setPassword(secretService.getValkeyPassword());
+        clusterConfig.setMaxRedirects(5);
+        return clusterConfig;
     }
 
     @Bean
