@@ -1,5 +1,7 @@
 package com.robottx.todo.config;
 
+import com.oracle.bmc.util.internal.StringUtils;
+
 import com.robottx.todo.service.secret.SecretService;
 
 import java.util.List;
@@ -39,12 +41,14 @@ public class SecurityConfig {
 
     @Bean
     public ClientRegistration clientRegistration(ServiceConfig serviceConfig, SecretService secretService) {
+        String hostname = serviceConfig.getHostname();
+        hostname = StringUtils.isBlank(hostname) ? "{baseUrl}" : hostname;
         return ClientRegistration.withRegistrationId("keycloak")
                 .clientId(serviceConfig.getApplicationClientId())
                 .clientSecret(secretService.getClientSecret())
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .redirectUri("%s/login/oauth2/code/{registrationId}".formatted(hostname))
                 .scope("openid", "profile", "email")
                 .authorizationUri(serviceConfig.getAuthorizationServerUri())
                 .tokenUri(serviceConfig.getAuthorizationServerTokenUri())
