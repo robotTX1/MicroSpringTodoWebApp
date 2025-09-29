@@ -12,6 +12,9 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource(value = "file:${config-directory}/service.properties")
 public class ServiceConfig {
 
+    // Service
+    private String hostname;
+
     // Valkey
     private String valkeyHostname;
     private Integer valkeyPort;

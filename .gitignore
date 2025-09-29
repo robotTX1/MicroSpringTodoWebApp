@@ -34,3 +34,4 @@ build/
 
 /local-config/
 /src/frontend/node_modules/
+/native-build.sh
