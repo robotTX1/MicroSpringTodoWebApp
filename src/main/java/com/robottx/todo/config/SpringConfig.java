@@ -10,6 +10,7 @@ import com.robottx.todo.service.secret.SecretService;
 
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
 
 import jakarta.ws.rs.InternalServerErrorException;
 
@@ -22,11 +23,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
+
+import io.lettuce.core.cluster.ClusterClientOptions;
+import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
 
 @Configuration
 public class SpringConfig {
@@ -43,7 +48,18 @@ public class SpringConfig {
 
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory(RedisConfiguration redisConfiguration) {
-        return new LettuceConnectionFactory(redisConfiguration);
+        ClusterTopologyRefreshOptions topologyRefreshOptions = ClusterTopologyRefreshOptions.builder()
+                .enableAllAdaptiveRefreshTriggers()
+                .enablePeriodicRefresh()
+                .build();
+        ClusterClientOptions clusterClientOptions = ClusterClientOptions.builder()
+                .topologyRefreshOptions(topologyRefreshOptions)
+                .build();
+        LettuceClientConfiguration clientConfiguration = LettuceClientConfiguration.builder()
+                .commandTimeout(Duration.ofSeconds(30))
+                .clientOptions(clusterClientOptions)
+                .build();
+        return new LettuceConnectionFactory(redisConfiguration, clientConfiguration);
     }
 
     @Bean
